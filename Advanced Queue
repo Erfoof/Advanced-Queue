@@ -8,7 +8,7 @@ class Queue {
 private:
     int rear;
     int front;
-    //Pointer to store the address of the array(queue).
+    //Pointer to store the address of the dynamic array(queue).
     int* Array;
     int Size; 
     int Numofobj = 0;
