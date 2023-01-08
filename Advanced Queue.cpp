@@ -15,7 +15,6 @@ private:
     int item;
     string Queuename;
     int Queueposition = 0;
-    /*const int Sizecpy;*/
     
 public:
 
@@ -30,20 +29,36 @@ public:
         Queuename = queuename;
     };
 
+   
     //destructer for when user wants the object to be deleted
     ~Queue() {
         delete[] Array;
         Numofobj--;
+        cout << "Object deleted" << endl;
         
     }
 
     //Copy constructor
     //rhs stands for right hand side (the object we're copying)
-    /*Queue(const Queue& rhs) {
+    Queue(const Queue& rhs) {
         Array = new int[Size];
-        for(i = 0; i < Size; i++)
+        for (int i = 0; i < Size; i++ ) {
+            Array[i] = rhs.Array[i];
+        };
 
-    };*/
+    };
+
+    //Assignment operator
+    Queue& operator=(const Queue& rhs) {
+        if (&rhs == this) {
+            return *this; // we dont wanna deal with assigning the same queue to itself.
+            };
+            delete[] Array;
+            for (int i = 0; i < Size; i++) {
+                Array[i] = rhs.Array[i];
+            };
+            return *this;
+    };
 
 
     //getter for the current size of the class.
@@ -127,6 +142,9 @@ public:
         }
     }
 
+    int getSize() {
+        return Size;
+    };
     
 };
 //The object is dynamically allocated.
@@ -150,16 +168,21 @@ int main() {
     string Qname;
     int Qsize;
     int element;
+    string Qclone;
+    int instances= 0;
     //displaying options of enqueue, dequeue, front, display to the user
-    cout << "1: Create new Queue" << endl;
-    cout << "2: Dequeue" << endl;
-    cout << "3: Display all the elements of queue" << endl;
-    cout << "4: Display front element of queue" << endl;
-    cout << "5: Enqueue" << endl;
-    cout << "6. Delete a Queue" << endl;
-    cout << "7. Exit" <<endl;
-
+    
     do {
+        cout << "1: Create new Queue" << endl;
+        cout << "2: Dequeue" << endl;
+        cout << "3: Display all the elements of queue" << endl;
+        cout << "4: Display front element of queue" << endl;
+        cout << "5: Enqueue" << endl;
+        cout << "6. Delete a Queue" << endl;
+        cout << "7. Clone Queue" << endl;
+        cout << "8. Exit" <<endl;
+        cout << "9. Clear creen" << endl;
+
         //taking user choice 
         cout << "Enter your choice: " << endl;
         cin >> ch;
@@ -178,12 +201,17 @@ int main() {
             //i did mention the pointer is of data type of the class "Queue". this is because pointers can only store the address of the same data type
             //Which in our case, is a pointer to the address of a CLASS. hence, our data type being the CLASS "Queue".
             Queue *pointer2 = newqueue(Qname, Qsize);
-
+            
             //as soon as the object is made,a pair of string and a pointer (to the objects address) is made.
             //The pair will use the name of the queue as a key to reference the address of the object.
             //This way we can use the objects methods and whatnot using the name and not the adress.
             //The mapping of the name and address looks like this -->link[Qname]->METHOD(); (link is the name of the map)
             link.insert(pair<string,Queue* >(Qname,pointer2));
+
+            instances++; //only way to tell if the class has 0 objects or not. If case 1 is not called. Then instances will be equal to 0.
+            //So, we wont have any compiler error for having the cloning function. Since the cloning function needs a pre-existing object.
+            //But, if we the class has no objects, it wont be able to run.
+            cout << "Queue created with the name: " << Qname << endl;
             break;
         }
         case 2:
@@ -225,12 +253,34 @@ int main() {
             break;
 
         case 7:
+            if (instances != 0) {
+                cout << "Input the name of the queue you would like to clone: " << endl;
+                cin >> Qname;
+                cout << "Input the name of the clone: " << endl;
+                cin >> Qclone; //Name of the DS
+                //create the clone first and set it to the size of the original queue. And also add it to the dictionary.
+                Queue* pointer3 = newqueue(Qclone, link[Qname]->getSize());
+                link.insert(pair<string, Queue* >(Qname, pointer3));
+                //Then we apply the equal operator
+                link[Qclone] = link[Qname];
+                cout << "Clone of " << Qname << "created with the name:  " << Qclone << endl;
+            }
+            else {
+                cout << "There are no objects available to copy. Please create one first." << endl;
+            }
+            break;
+
+        case 8:
             cout << "Exit" << endl;
+            break;
+
+        case 9:
+            system("cls");
             break;
 
         default: cout << "Invalid choice" << endl;
 
         }
-        } while (ch != 7);
+        } while (ch != 8);
         return 0;
     };
